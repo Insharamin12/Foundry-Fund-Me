@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-import {Test, console} from "forge-std/Test.sol";
+import {DeployFundMe} from "../../script/DeployFundMe.s.sol";
 import {FundMe} from "../../src/FundMe.sol";
-import {DeployFundMe} from "../../script/DeployfundMe.s.sol";
+import {HelperConfig} from "../../script/HelperConfig.s.sol";
+import {Test, console} from "forge-std/Test.sol";
+
 
 contract FundMeTest is Test {
     FundMe fundMe;
@@ -36,10 +38,11 @@ contract FundMeTest is Test {
         fundMe.fund();
     }
     function testFundUpdatesFundedDataStructure() public {
-        vm.prank(USER);
+        vm.startPrank(USER);
         fundMe.fund{value: SEND_VALUE}();
+        vm.stopPrank();
 
-        uint256 amountFunded = fundMe.getAddressToAmountFunded(address(this));
+        uint256 amountFunded = fundMe.getAddressToAmountFunded(USER);
         assertEq(amountFunded, SEND_VALUE);
     }
     function testAddsFunderToArrayOfFunders() public {
