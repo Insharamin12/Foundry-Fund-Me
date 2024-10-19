@@ -80,7 +80,6 @@ contract FundMe {
     /**
      * Getter Functions
      */
-    
     function getAddressToAmountFunded(address fundingAddress) public view returns (uint256) {
         return s_addressToAmountFunded[fundingAddress];
     }

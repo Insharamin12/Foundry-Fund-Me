@@ -6,7 +6,6 @@ import {FundMe} from "../../src/FundMe.sol";
 import {HelperConfig} from "../../script/HelperConfig.s.sol";
 import {Test, console} from "forge-std/Test.sol";
 
-
 contract FundMeTest is Test {
     FundMe fundMe;
     address USER = makeAddr("user");
@@ -21,22 +20,24 @@ contract FundMeTest is Test {
         vm.deal(USER, STARTING_BALANCE);
     }
 
-    function testMinimumDollarIsFive() view public {
+    function testMinimumDollarIsFive() public view {
         assertEq(fundMe.MINIMUM_USD(), 5e18);
     }
 
-    function testOwnerIsMsgSender() view public {
+    function testOwnerIsMsgSender() public view {
         assertEq(fundMe.getOwner(), msg.sender);
     }
-    function testPriceFeedVersionIsAccurate() view public {
+
+    function testPriceFeedVersionIsAccurate() public view {
         uint256 version = fundMe.getVersion();
         assertEq(version, 4);
-
     }
+
     function testFundFailsWithoutEnoughETH() public {
         vm.expectRevert();
         fundMe.fund();
     }
+
     function testFundUpdatesFundedDataStructure() public {
         vm.startPrank(USER);
         fundMe.fund{value: SEND_VALUE}();
@@ -45,6 +46,7 @@ contract FundMeTest is Test {
         uint256 amountFunded = fundMe.getAddressToAmountFunded(USER);
         assertEq(amountFunded, SEND_VALUE);
     }
+
     function testAddsFunderToArrayOfFunders() public {
         vm.prank(USER);
         fundMe.fund{value: SEND_VALUE}();
@@ -54,10 +56,11 @@ contract FundMeTest is Test {
 
     modifier funded() {
         vm.prank(USER);
-        fundMe.fund{value:SEND_VALUE}();
+        fundMe.fund{value: SEND_VALUE}();
         _;
     }
-    function testOnlyOwnerCanWithdraw() public funded{
+
+    function testOnlyOwnerCanWithdraw() public funded {
         vm.prank(USER);
         vm.expectRevert();
         fundMe.withdraw();
@@ -79,11 +82,11 @@ contract FundMeTest is Test {
         assertEq(endingFundMeBalance, 0);
         assertEq(startingFundMeBalance + startingOwnerBalance, endingOwnerBalance);
     }
-    function testWithdrawFromMultipleFunders() public funded{
 
+    function testWithdrawFromMultipleFunders() public funded {
         uint160 numberOfFunders = 10;
         uint160 startingFunderIndex = 1;
-        for(uint160 i = startingFunderIndex; i<= numberOfFunders; i++) {
+        for (uint160 i = startingFunderIndex; i <= numberOfFunders; i++) {
             hoax(address(i), SEND_VALUE);
             fundMe.fund{value: SEND_VALUE}();
         }

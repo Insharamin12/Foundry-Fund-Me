@@ -20,6 +20,7 @@ contract FundMeTestIn is Test {
         fundMe = deployFundMe.run();
         vm.deal(USER, STARTING_BALANCE);
     }
+
     function testUserCanFundAndOwnerWithdraw() public {
         uint256 preUserBalance = address(USER).balance;
         uint256 preOwnerBalance = address(fundMe.getOwner()).balance;
@@ -38,5 +39,4 @@ contract FundMeTestIn is Test {
         assertEq(afterUserBalance + SEND_VALUE, preUserBalance);
         assertEq(preOwnerBalance + SEND_VALUE, afterOwnerBalance);
     }
-
 }
